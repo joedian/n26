@@ -23,7 +23,7 @@ public class StatisticsGenerator {
 	
 	private static final Logger log = LoggerFactory.getLogger(StatisticsGenerator.class);
 
-    @Scheduled(fixedRate = 1000)//run it every second
+    @Scheduled(fixedRate = 1000)//run it every second so statistic is valid
     public void generateCurrentStatistics() {
     	 System.out.println("Current timestamp: " +  Instant.now().atOffset(ZoneOffset.UTC ).toInstant().toEpochMilli());
         statisticService.updateStatistics();
