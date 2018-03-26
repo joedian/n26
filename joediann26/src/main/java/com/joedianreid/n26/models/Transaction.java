@@ -5,7 +5,7 @@ import java.util.Comparator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Transaction implements Comparator<Transaction>{
+public class Transaction implements Comparator<Transaction> , Comparable<Transaction>{
 	
 	private Double amount;
 	
@@ -52,6 +52,12 @@ public class Transaction implements Comparator<Transaction>{
 		 int retVal = o2.getTimestamp().compareTo(o1.getTimestamp());
 		 
 		 return retVal;
+	}
+
+	@Override
+	public int compareTo(Transaction o) {
+		
+		return this.timestamp.compareTo(o.timestamp);
 	}
 	
 }

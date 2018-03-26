@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.joedianreid.n26.models.Transaction;
+import com.joedianreid.n26.validators.TransactionValidators;
 
 
 @Service
@@ -22,7 +23,7 @@ public class TransactionService {
 	public boolean addTransaction(Transaction transaction){
 				
 		if(transaction == null || transaction.getTimestamp() == null || 
-				StatisticService.isInvalidTimestamp(transaction.getTimestamp())){
+				TransactionValidators.isInvalidTimestamp(transaction.getTimestamp())){
 			return false;
 		}
 		

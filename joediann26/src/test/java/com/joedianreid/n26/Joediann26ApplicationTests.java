@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.joedianreid.n26.controller.StatisticsController;
 import com.joedianreid.n26.controller.TransactionController;
+import com.joedianreid.n26.exceptions.InvalidTransactionException;
 import com.joedianreid.n26.models.Transaction;
 import com.joedianreid.n26.models.TransactionResponse;
 
@@ -23,13 +26,15 @@ import com.joedianreid.n26.models.TransactionResponse;
 @DirtiesContext(methodMode=MethodMode.BEFORE_METHOD)
 public class Joediann26ApplicationTests {
 	
-	Instant instant = Instant.now();
-    
-    Long timeNow = instant.toEpochMilli();
+	Instant instant = Instant.now().atOffset(ZoneOffset.UTC ).toInstant();	
+	
+	Long timeNow = instant.toEpochMilli();
 	
 	private Long minTimeAllowed = timeNow - 60000;
 	
 	private int numberOfTestCalls = 62;
+	
+	private int minNumberOfTestCalls = 5;
 	
 	private int intervalOfCalls = 100;
 	
@@ -47,33 +52,53 @@ public class Joediann26ApplicationTests {
 		
 	
 	@Test
-    public void test_201() throws Exception {      
-			
-		TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow -1000));			
-				
-		Thread.sleep(1000);			
+    public void test_201() throws Exception {   
 		
-		assertEquals(response.getResponseCode(), 201);
+		int calls = minNumberOfTestCalls;
+			
+		while(calls > 0){
+			TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow -1000));			
+					
+			Thread.sleep(1000);			
+			
+			assertEquals(response.getResponseCode(), 201);
+			
+			calls--;
+		}
+		
+    }
+	
+	@Test(expected = InvalidTransactionException.class)
+    public void test_201_timesOut() throws Exception {   
+		
+		int calls = numberOfTestCalls;
+			
+		while(calls > 0){
+			TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow -1000));			
+					
+			Thread.sleep(1000);			
+			
+			assertEquals(response.getResponseCode(), 201);
+			
+			calls--;
+		}
 		
     }
 
-    @Test
+	@Test(expected = InvalidTransactionException.class)
     public void test_204_future() throws Exception {      
-    	TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow + 40000));			
-		
-		Thread.sleep(1000);			
-		
-		assertEquals(response.getResponseCode(), 204);
+    	TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow + 40000));		
+    	
+    	assertEquals(response.getResponseCode(), 204);		
+			
     }
     
     
-    @Test
+    @Test(expected = InvalidTransactionException.class)
     public void test_204_past() throws Exception {      
-    	TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow - 200000));			
-		
-		Thread.sleep(1000);			
-		
-		assertEquals(response.getResponseCode(), 204);
+    	TransactionResponse response = transactionController.createTransaction(new Transaction(20D, timeNow - 200000));	
+    	
+    	assertEquals(response.getResponseCode(), 204);				
     }
 
 }

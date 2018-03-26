@@ -14,10 +14,14 @@ public class StatisticsController {
 	@Autowired
 	private StatisticService statisticService;
 	
-	@RequestMapping(value = "/statistics",		method = RequestMethod.GET)
-	public Statistic getStatistics(){
 	
-		return statisticService.getStatistics();
+	/**
+	 * This endpoint provides o(1) constant response as it pulls an already generated statistics and doesnt actually calulate it
+	 * @return
+	 */
+	@RequestMapping(value = "/statistics", method = RequestMethod.GET)
+	public Statistic getStatistics(){	
+		return statisticService.getCurrentStatistic();
 	}
 
 }
