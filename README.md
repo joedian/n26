@@ -32,6 +32,11 @@ USing Postman App
     - Set the request type to POST
       Set the content type in the header to application/json; charset=UTF-8
       Add the JSON for the Transaction to the body of the request (in the raw option)
+      e.g. 
+      {"amount" :200, 
+"timestamp" : 
+	3265561616
+}
       Add the request path
       Press send
 - statistics , http://localhost:8080/statistics 
